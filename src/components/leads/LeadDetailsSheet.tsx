@@ -51,8 +51,7 @@ const LeadDetailsSheet: React.FC<LeadDetailsSheetProps> = ({
   };
 
   const handleSave = async () => {
-    if (!lead.lead_id) return;
-
+    // If we're editing an existing lead, we need the ID. If it's a new lead, lead_id is missing.
     setIsSaving(true);
     try {
       // Only update specific fields that are safe to update
@@ -72,17 +71,22 @@ const LeadDetailsSheet: React.FC<LeadDetailsSheetProps> = ({
         Object.entries(updateData).filter(([_, value]) => value !== undefined)
       );
 
-      const { error } = await supabase
-        .from('leads')
-        .update(cleanUpdateData)
-        .eq('lead_id', lead.lead_id);
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+      if (lead.lead_id) {
+        const { error } = await supabase
+          .from('leads')
+          .update(cleanUpdateData)
+          .eq('lead_id', lead.lead_id);
+        
+        if (error) throw error;
+        toast.success('Lead updated successfully');
+      } else {
+        const { error } = await supabase
+          .from('leads')
+          .insert([cleanUpdateData]);
+        
+        if (error) throw error;
+        toast.success('New lead created successfully');
       }
-
-      toast.success('Lead updated successfully');
       onLeadUpdate?.();
       onClose();
     } catch (error) {
@@ -147,7 +151,7 @@ const LeadDetailsSheet: React.FC<LeadDetailsSheetProps> = ({
             <div className="flex items-center space-x-3 min-w-0 flex-1">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-primary font-medium text-lg">
-                  {lead.name.charAt(0)}
+                  {(lead.name || 'N').charAt(0)}
                 </span>
               </div>
               <div className="min-w-0 flex-1">
