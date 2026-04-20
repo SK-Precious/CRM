@@ -31,6 +31,8 @@ import {
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { useRole } from '../hooks/useRole';
 
 interface Permission {
   id: string;
@@ -51,6 +53,8 @@ interface QuickAction {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { role } = useRole();
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -162,10 +166,10 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h1 className="text-lg md:text-2xl font-semibold text-foreground">
-                Welcome, Employee 000
+                Welcome, {profile?.name || 'User'}
               </h1>
               <p className="text-xs md:text-sm text-muted-foreground mt-1">
-                Role: Administrator | Access Level: 000
+                Role: <span className="uppercase">{role?.replace('_', ' ') || 'Member'}</span> | Venue: {profile?.venue_id || 'Global'}
               </p>
             </div>
             <div className="flex items-center space-x-2">

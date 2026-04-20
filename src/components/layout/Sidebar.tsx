@@ -17,28 +17,34 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../ui/Button';
+import { useRole } from '../../hooks/useRole';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
   onClose?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
+  const { role, isDirector, isGM } = useRole();
   const location = useLocation();
   const navigate = useNavigate();
 
   const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: Users, label: 'Leads', path: '/leads' },
-    { icon: Calendar, label: 'Calendar', path: '/calendar' },
-    { icon: BarChart2, label: 'Analytics', path: '/analytics' },
-    { icon: Store, label: 'Vendors', path: '/vendors' },
-    { icon: ShieldCheck, label: 'Admins', path: '/admins' },
-    { icon: Activity, label: 'Operations', path: '/operations' },
-    { icon: Camera, label: 'AI Intake', path: '/ocr' },
-    { icon: BookOpen, label: 'Bookings', path: '/bookings' },
-    { icon: CreditCard, label: 'Payments', path: '/payments' },
-    { icon: Briefcase, label: 'Banquety Team', path: '/team' },
+    { icon: Home, label: 'Dashboard', path: '/', roles: ['director', 'gm', 'junior_sales', 'storekeeper'] },
+    { icon: Users, label: 'Leads', path: '/leads', roles: ['director', 'gm', 'junior_sales'] },
+    { icon: Calendar, label: 'Calendar', path: '/calendar', roles: ['director', 'gm', 'junior_sales', 'storekeeper'] },
+    { icon: BarChart2, label: 'Analytics', path: '/analytics', roles: ['director', 'gm'] },
+    { icon: Store, label: 'Vendors', path: '/vendors', roles: ['director', 'gm', 'junior_sales', 'storekeeper'] },
+    { icon: Activity, label: 'Operations', path: '/operations', roles: ['director', 'gm'] },
+    { icon: Camera, label: 'AI Intake', path: '/ocr', roles: ['director', 'gm', 'junior_sales'] },
+    { icon: BookOpen, label: 'Bookings', path: '/bookings', roles: ['director', 'gm', 'junior_sales'] },
+    { icon: CreditCard, label: 'Payments', path: '/payments', roles: ['director', 'gm', 'junior_sales'] },
+    { icon: Briefcase, label: 'Banquety Team', path: '/team', roles: ['director', 'gm'] },
   ];
+
+  const filteredItems = menuItems.filter(item => 
+    !item.roles || (role && item.roles.includes(role))
+  );
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -78,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       </div>
 
       <nav className="mt-6 px-3 flex-1">
-        {menuItems.map((item) => (
+        {filteredItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
@@ -98,11 +104,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       <div className="p-6 border-t border-border">
         <div className="flex items-center mb-4">
           <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-            <span className="text-primary font-medium">A</span>
+            <span className="text-primary font-medium">{(profile?.name || 'A').charAt(0)}</span>
           </div>
           <div className="ml-3">
-            <p className="text-sm font-medium text-foreground">Admin User</p>
-            <p className="text-xs text-muted-foreground">admin@shaadiyaar.com</p>
+            <p className="text-sm font-medium text-foreground">{profile?.name || 'Admin User'}</p>
+            <p className="text-xs text-muted-foreground">{profile?.email || 'admin@shaadiyaar.com'}</p>
           </div>
         </div>
         <button

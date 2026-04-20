@@ -112,7 +112,23 @@ const Calendar = () => {
             <Button variant="outline">
               <Filter className="w-5 h-5 mr-2" /> Filter
             </Button>
-            <Button variant="primary">
+            <Button 
+              variant="primary"
+              onClick={() => {
+                const newLead: any = {
+                  name: '',
+                  number: '',
+                  lead_type: 'Hot Lead',
+                  wedding_date: format(currentDate, 'yyyy-MM-dd'),
+                  budget: '',
+                  location: '',
+                  type_of_venue: '',
+                  numeric_budget: 0,
+                  status: 'new'
+                };
+                setSelectedLead(newLead);
+              }}
+            >
               <Plus className="w-5 h-5 mr-2" /> Add Event
             </Button>
           </div>

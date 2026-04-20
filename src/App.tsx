@@ -6,7 +6,6 @@ import Leads from './pages/Leads';
 import Calendar from './pages/Calendar';
 import Analytics from './pages/Analytics';
 import Vendors from './pages/Vendors';
-import Admins from './pages/Admins';
 import Login from './pages/Login';
 import Operations from './pages/Operations';
 import BookingOperations from './pages/BookingOperations';
@@ -34,7 +33,6 @@ function App() {
                   <Route path="/calendar" element={<Calendar />} />
                   <Route path="/analytics" element={<Analytics />} />
                   <Route path="/vendors" element={<Vendors />} />
-                  <Route path="/admins" element={<Admins />} />
                   <Route path="/operations" element={<Operations />} />
                   <Route path="/bookings" element={<BookingOperations />} />
                   <Route path="/payments" element={<PaymentApprovals />} />
